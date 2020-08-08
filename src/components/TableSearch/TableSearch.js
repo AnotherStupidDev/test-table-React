@@ -16,6 +16,12 @@ export const TableSearch = (props) => {
         >
           Search
         </button>
+        <button
+          className="btn btn-outline-secondary"
+          onClick={props.onAddPerson}
+        >
+          Add Person
+        </button>
         <button className="btn btn-outline-secondary" onClick={props.onReset}>
           Reset
         </button>

@@ -5,6 +5,8 @@ import { TableSearch } from "./components/TableSearch/TableSearch"
 import DetailRowInfo from "./components/DetailRowInfo/DetailRowInfo"
 import DataVolumeSelector from "./components/DataVolumeSelector/DataVolumeSelector"
 import { Pagination } from "./components/Pagination/Pagination"
+import Form from "./components/Form/Form"
+import Modal from "./components/UI/Modal/Modal"
 
 const App = () => {
   const [data, setData] = useState([])
@@ -14,8 +16,9 @@ const App = () => {
   const [showRowInfo, setShowRowInfo] = useState(null)
   const [isDataVolumeSelected, setIsDataVolumeSelected] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
-  const [rowsPerPage] = useState(28)
+  const [rowsPerPage] = useState(30)
   const [searchField, setSearchField] = useState("")
+  const [isAddingPerson, setIsAddingPerson] = useState(false)
 
   const onSortHandler = (sortFieldName) => {
     const dataClone = [...data]
@@ -70,6 +73,15 @@ const App = () => {
     })
   }
 
+  const addPerson = (id, firstName, lastName, email, phone) => {
+    setData([{ id, firstName, lastName, email, phone }, ...data])
+    setIsAddingPerson(false)
+  }
+
+  const onAddPersonHandler = () => {
+    setIsAddingPerson(true)
+  }
+
   async function fetchData(url) {
     const response = await fetch(url)
     const data = await response.json()
@@ -81,7 +93,7 @@ const App = () => {
   const indexOfLastRow = currentPage * rowsPerPage
   const indexOfFirstRow = indexOfLastRow - rowsPerPage
   const currentData = getFilteredData().slice(indexOfFirstRow, indexOfLastRow)
-  const paginateHandler = (pageNumber) => setCurrentPage(pageNumber)
+  const onPageChangedHandler = (pageNumber) => setCurrentPage(pageNumber)
 
   // useEffect(() => {
   //   // fetchData()
@@ -94,14 +106,25 @@ const App = () => {
       </div>
     )
   }
-  console.log("AAAAA")
+  console.log(data)
   return (
     <div className="container">
       {isLoading ? (
         <Loader />
       ) : (
         <React.Fragment>
-          <TableSearch onSearch={searchHandler} onReset={resetHandler} />
+          <Modal
+            show={isAddingPerson}
+            modalClosed={() => setIsAddingPerson(false)}
+          >
+            <Form addPerson={addPerson} />
+          </Modal>
+
+          <TableSearch
+            onSearch={searchHandler}
+            onReset={resetHandler}
+            onAddPerson={onAddPersonHandler}
+          />
           <Table
             data={currentData}
             onSort={onSortHandler}
@@ -116,7 +139,8 @@ const App = () => {
         <Pagination
           rowsPerPage={rowsPerPage}
           totalRows={data.length}
-          paginate={paginateHandler}
+          onPageChanged={onPageChangedHandler}
+          portionSize={27}
         />
       )}
     </div>
