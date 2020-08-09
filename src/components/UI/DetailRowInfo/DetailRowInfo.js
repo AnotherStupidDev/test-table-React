@@ -4,8 +4,14 @@ export default ({ person }) => {
   return (
     <div className="thumbnail">
       <div className="thumbnail-caption">
-        <h3>{person.firstName + " " + person.lastName}</h3>
-        <table className="user-info table table-responsive">
+        <h3>
+          {"Выбран пользователь" +
+            " " +
+            person.firstName +
+            " " +
+            person.lastName}
+        </h3>
+        <table className="user-info table table-hover">
           <tbody>
             <tr>
               <td>ID:</td>
@@ -21,10 +27,15 @@ export default ({ person }) => {
             </tr>
           </tbody>
         </table>
-
-        <p>
-          <b>Description:</b> {person.description}
-        </p>
+        <form>
+          <div className="form-group">
+            <textarea
+              className="form-control"
+              value={person.description}
+              readOnly
+            ></textarea>
+          </div>
+        </form>
       </div>
     </div>
   )

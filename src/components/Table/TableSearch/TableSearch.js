@@ -22,8 +22,23 @@ export const TableSearch = (props) => {
         >
           Add Person
         </button>
-        <button className="btn btn-outline-secondary" onClick={props.onReset}>
+        <button
+          className="btn btn-outline-secondary"
+          onClick={() => {
+            props.onReset()
+            setValue("")
+          }}
+        >
           Reset
+        </button>
+        <button
+          className="btn btn-outline-secondary"
+          onClick={() => {
+            props.onBacking()
+            setValue("")
+          }}
+        >
+          Back to the Root
         </button>
       </div>
       <input

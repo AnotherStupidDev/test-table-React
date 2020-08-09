@@ -1,92 +1,129 @@
-import React from "react"
+import React, { useState } from "react"
+import { updateObject, checkValidity } from "../../utility/utility"
 
 const Form = (props) => {
-  //   constructor() {
-  //     super()
+  const initialAddPersonFormState = {
+    id: {
+      id: "id",
+      value: "",
+      valid: false,
+    },
+    firstName: {
+      id: "firstName",
+      value: "",
+      valid: false,
+    },
+    lastName: {
+      id: "lastName",
+      value: "",
+      valid: false,
+    },
+    email: {
+      id: "email",
+      value: "",
+      valid: false,
+    },
+    phone: {
+      id: "phone",
+      value: "",
+      valid: false,
+    },
+  }
+  const [addPersonForm, setAddPersonForm] = useState(initialAddPersonFormState)
+  const [isFormFilled, setIsFormFilled] = useState(false)
 
-  //     this.state = {
-  //       name: this.props.name,
-  //       email: this.props.email,
-  //     }
+  const inputChangedHandler = (event) => {
+    const inputId = event.target.id
+    const updatedFormElement = updateObject(addPersonForm[inputId], {
+      value: event.target.value,
+      valid: checkValidity(event.target.value),
+    })
 
-  //     this.handleChange = this.handleChange.bind(this)
-  //     this.addPerson = this.addPerson.bind(this)
+    const updatedAddPersonForm = updateObject(addPersonForm, {
+      [inputId]: updatedFormElement,
+    })
 
-  //     /*    this.formSubmit = this.formSubmit.bind(this); */
-  //   }
-  //   const [newPerson, setNewPerson] = useState({
-  //     id: "",
-  //     firstName: "",
-  //     lastName: "",
-  //     phone: "",
-  //   })
+    let formIsValid = true
 
-  //   const handleChange = (e) => {
-  //     setNewPerson({ [e.target.id]: e.target.value })
-  //   }
+    for (let inputIdentifier in updatedAddPersonForm) {
+      formIsValid = updatedAddPersonForm[inputIdentifier].valid && formIsValid
+    }
+    setAddPersonForm(updatedAddPersonForm)
+    setIsFormFilled(formIsValid)
+  }
 
   const formSubmitHandler = (event) => {
     event.preventDefault()
-    const form = event.target
-    const id = form.elements["formId"].value
-    const firstName = form.elements["formName"].value
-    const email = form.elements["formMail"].value
-    const lastName = form.elements["formSurname"].value
-    const phone = form.elements["formPhone"].value
-    props.addPerson(id, firstName, email, lastName, phone)
-    form.reset()
+    props.addPerson(addPersonForm)
+    setAddPersonForm(initialAddPersonFormState)
   }
 
   return (
     <form onSubmit={formSubmitHandler}>
+      <p>Добавить пользователя в таблицу</p>
       <div className="form-group">
-        <label htmlFor="formId">ID</label>
+        <label htmlFor={addPersonForm.id.id}>ID</label>
         <input
-          type="text"
+          type="number"
+          min="0"
           className="form-control"
-          id="formId"
+          id={addPersonForm.id.id}
           placeholder="ID"
+          value={addPersonForm.id.value}
+          onChange={(event) => inputChangedHandler(event)}
         />
       </div>
       <div className="form-group">
-        <label htmlFor="formName">First Name</label>
+        <label htmlFor={addPersonForm.firstName.id}>First Name</label>
         <input
           type="text"
           className="form-control"
-          id="formName"
+          id={addPersonForm.firstName.id}
           placeholder="Enter name"
+          value={addPersonForm.firstName.value}
+          onChange={(event) => inputChangedHandler(event)}
         />
       </div>
       <div className="form-group">
-        <label htmlFor="formSurname">Last Name</label>
+        <label htmlFor={addPersonForm.lastName.id}>Last Name</label>
         <input
           type="text"
           className="form-control"
-          id="formSurname"
+          id={addPersonForm.lastName.id}
           placeholder="Enter surname"
+          value={addPersonForm.lastName.value}
+          onChange={(event) => inputChangedHandler(event)}
         />
       </div>
       <div className="form-group">
-        <label htmlFor="formMail">Email address</label>
+        <label htmlFor={addPersonForm.email.id}>Email address</label>
         <input
           type="email"
           className="form-control"
-          id="formMail"
+          id={addPersonForm.email.id}
           aria-describedby="emailHelp"
           placeholder="Enter email"
+          value={addPersonForm.email.value}
+          onChange={(event) => inputChangedHandler(event)}
         />
       </div>
       <div className="form-group">
-        <label htmlFor="formPhone">Phone</label>
+        <label htmlFor={addPersonForm.phone.id}>Phone</label>
         <input
           type="tel"
           className="form-control"
-          id="formPhone"
+          id={addPersonForm.phone.id}
           placeholder="Enter phone"
+          value={addPersonForm.phone.value}
+          onChange={(event) => inputChangedHandler(event)}
         />
       </div>
-      <button type="submit" className="btn btn-primary">
-        Submit
+      <button
+        type="submit"
+        className="btn btn-primary"
+        disabled={!isFormFilled}
+      >
+        Add to the table
       </button>
     </form>
   )

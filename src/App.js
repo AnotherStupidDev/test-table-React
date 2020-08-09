@@ -1,12 +1,13 @@
 import React, { useState } from "react"
-import Loader from "./components/Loader/Loader"
+import Loader from "./components/UI/Loader/Loader"
 import { Table } from "./components/Table/Table"
-import { TableSearch } from "./components/TableSearch/TableSearch"
-import DetailRowInfo from "./components/DetailRowInfo/DetailRowInfo"
+import { TableSearch } from "./components/Table/TableSearch/TableSearch"
+import DetailRowInfo from "./components/UI/DetailRowInfo/DetailRowInfo"
 import DataVolumeSelector from "./components/DataVolumeSelector/DataVolumeSelector"
-import { Pagination } from "./components/Pagination/Pagination"
+import { Pagination } from "./components/Table/Pagination/Pagination"
 import Form from "./components/Form/Form"
 import Modal from "./components/UI/Modal/Modal"
+import axios from "axios"
 
 const App = () => {
   const [data, setData] = useState([])
@@ -19,6 +20,7 @@ const App = () => {
   const [rowsPerPage] = useState(30)
   const [searchField, setSearchField] = useState("")
   const [isAddingPerson, setIsAddingPerson] = useState(false)
+  const [error, setError] = useState(false)
 
   const onSortHandler = (sortFieldName) => {
     const dataClone = [...data]
@@ -73,7 +75,13 @@ const App = () => {
     })
   }
 
-  const addPerson = (id, firstName, lastName, email, phone) => {
+  const addPerson = ({ id, firstName, lastName, email, phone }) => {
+    id = id.value
+    firstName = firstName.value
+    lastName = lastName.value
+    email = email.value
+    phone = phone.value
+
     setData([{ id, firstName, lastName, email, phone }, ...data])
     setIsAddingPerson(false)
   }
@@ -82,11 +90,26 @@ const App = () => {
     setIsAddingPerson(true)
   }
 
+  const errorClickedHandler = () => {
+    setError("")
+    setIsDataVolumeSelected(false)
+  }
+
+  const onBackHandler = () => {
+    setData([])
+    setIsDataVolumeSelected(false)
+  }
+
   async function fetchData(url) {
-    const response = await fetch(url)
-    const data = await response.json()
-    setData(data)
-    setIsLoading(false)
+    try {
+      const response = await axios.get(url)
+      setData(response.data)
+      setIsLoading(false)
+    } catch (e) {
+      setError(
+        "Не удалось загрузить объем данных, возможно это проверка ошибки, или проблемы с сервером :)",
+      )
+    }
   }
 
   // Get Current Rows
@@ -95,10 +118,6 @@ const App = () => {
   const currentData = getFilteredData().slice(indexOfFirstRow, indexOfLastRow)
   const onPageChangedHandler = (pageNumber) => setCurrentPage(pageNumber)
 
-  // useEffect(() => {
-  //   // fetchData()
-  // }, [])
-
   if (!isDataVolumeSelected) {
     return (
       <div className="container">
@@ -106,7 +125,13 @@ const App = () => {
       </div>
     )
   }
-  console.log(data)
+  if (error) {
+    return (
+      <Modal show={error} modalClosed={errorClickedHandler}>
+        {error ? error : null}
+      </Modal>
+    )
+  }
   return (
     <div className="container">
       {isLoading ? (
@@ -124,6 +149,7 @@ const App = () => {
             onSearch={searchHandler}
             onReset={resetHandler}
             onAddPerson={onAddPersonHandler}
+            onBacking={onBackHandler}
           />
           <Table
             data={currentData}
