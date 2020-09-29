@@ -5,7 +5,7 @@ export const Table = (props) => (
   <table className="table table-hover">
     <thead>
       <tr>
-        <th scope="col" onClick={props.onSort.bind(null, "id")}>
+        <th scope="col" onClick={() => props.onSort("id")}>
           ID{" "}
           {props.sortField === "id" ? (
             <span>
@@ -17,7 +17,7 @@ export const Table = (props) => (
             </span>
           ) : null}
         </th>
-        <th scope="col" onClick={props.onSort.bind(null, "firstName")}>
+        <th scope="col" onClick={() => props.onSort("firstName")}>
           First Name
           {props.sortField === "firstName" ? (
             <span>
@@ -29,7 +29,7 @@ export const Table = (props) => (
             </span>
           ) : null}
         </th>
-        <th scope="col" onClick={props.onSort.bind(null, "lastName")}>
+        <th scope="col" onClick={() => props.onSort("lastName")}>
           Last Name
           {props.sortField === "lastName" ? (
             <span>
@@ -41,7 +41,7 @@ export const Table = (props) => (
             </span>
           ) : null}
         </th>
-        <th scope="col" onClick={props.onSort.bind(null, "email")}>
+        <th scope="col" onClick={() => props.onSort("email")}>
           Email
           {props.sortField === "email" ? (
             <span>
@@ -53,7 +53,7 @@ export const Table = (props) => (
             </span>
           ) : null}
         </th>
-        <th scope="col" onClick={props.onSort.bind(null, "phone")}>
+        <th scope="col" onClick={() => props.onSort("phone")}>
           Phone
           {props.sortField === "phone" ? (
             <span>
@@ -71,7 +71,7 @@ export const Table = (props) => (
       {props.data.map((item) => (
         <tr
           key={item.id + item.lastName}
-          onClick={props.onRowSelect.bind(null, item)}
+          onClick={() => props.onRowSelect(item)}
         >
           <td>{item.id}</td>
           <td>{item.firstName}</td>
